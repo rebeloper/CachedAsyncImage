@@ -13,6 +13,30 @@ fileprivate class ImageCache {
     }
 }
 
+/// Loads, displays and caches a modifiable image from the specified URL in phases.
+///
+/// If you set the asynchronous image's URL to `nil`, or after you set the
+/// URL to a value but before the load operation completes, the phase is
+/// ``AsyncImagePhase/empty``. After the operation completes, the phase
+/// becomes either ``AsyncImagePhase/failure(_:)`` or
+/// ``AsyncImagePhase/success(_:)``. In the first case, the phase's
+/// ``AsyncImagePhase/error`` value indicates the reason for failure.
+/// In the second case, the phase's ``AsyncImagePhase/image`` property
+/// contains the loaded image. Use the phase to drive the output of the
+/// `content` closure, which defines the view's appearance:
+///
+///     CachedAsyncImage(url: URL(string: "https://example.com/icon.png")) { phase in
+///         if let image = phase.image {
+///             image // Displays the loaded image.
+///         } else if phase.error != nil {
+///             Color.red // Indicates an error.
+///         } else {
+///             Color.blue // Acts as a placeholder.
+///         }
+///     }
+///
+/// To add transitions when you change the URL, apply an identifier to the
+/// ``CachedAsyncImage``.
 public struct CachedAsyncImage<Content>: View where Content: View{
 
     private let url: URL?
@@ -21,29 +45,6 @@ public struct CachedAsyncImage<Content>: View where Content: View{
     private let content: (AsyncImagePhase) -> Content
     
     /// Loads, displays and caches a modifiable image from the specified URL in phases.
-    ///
-    /// If you set the asynchronous image's URL to `nil`, or after you set the
-    /// URL to a value but before the load operation completes, the phase is
-    /// ``AsyncImagePhase/empty``. After the operation completes, the phase
-    /// becomes either ``AsyncImagePhase/failure(_:)`` or
-    /// ``AsyncImagePhase/success(_:)``. In the first case, the phase's
-    /// ``AsyncImagePhase/error`` value indicates the reason for failure.
-    /// In the second case, the phase's ``AsyncImagePhase/image`` property
-    /// contains the loaded image. Use the phase to drive the output of the
-    /// `content` closure, which defines the view's appearance:
-    ///
-    ///     CachedAsyncImage(url: URL(string: "https://example.com/icon.png")) { phase in
-    ///         if let image = phase.image {
-    ///             image // Displays the loaded image.
-    ///         } else if phase.error != nil {
-    ///             Color.red // Indicates an error.
-    ///         } else {
-    ///             Color.blue // Acts as a placeholder.
-    ///         }
-    ///     }
-    ///
-    /// To add transitions when you change the URL, apply an identifier to the
-    /// ``AsyncImage``.
     ///
     /// - Parameters:
     ///   - url: The URL of the image to display.
